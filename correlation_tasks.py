@@ -20,11 +20,10 @@ def analyze_brain_correlations(data: BrainDataInput) -> BrainCorrelationSummary:
     }
     all_correlations = {}
     for feat in features:
-        all_correlations[feat] = max(
-            abs(men_mri_correlation[feat]),
-            abs(women_mri_correlation[feat])
-        )
-    strongest_mri_feature = max(all_correlations, key=all_correlations.get)
+        vals = [men_mri_correlation[feat], women_mri_correlation[feat]]
+        vals = [abs(v) for v in vals if not pd.isna(v)]
+        all_correlations[feat] = max(vals) if vals else float("-inf")
+    strongest_mri_feature = max(reversed(features), key=lambda f: all_correlations[f])
     return BrainCorrelationSummary(
         men_count=int(len(men)),
         women_count=int(len(women)),

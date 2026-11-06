@@ -18,7 +18,8 @@ def analyze_titanic(data: TitanicInput) -> TitanicSummary:
         int(k): float(v)
         for k, v in df.groupby("Pclass")["Survived"].mean().items()
     }
-    highest_fares = [float(x) for x in df["Fare"].nlargest(5).tolist()]
+    fares = pd.to_numeric(df["Fare"], errors="coerce").dropna()
+    highest_fares = [float(x) for x in fares.nlargest(5).tolist()]
     return TitanicSummary(
         row_count=row_count,
         missing_by_column=missing_by_column,
